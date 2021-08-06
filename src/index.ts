@@ -32,21 +32,14 @@ type Pomodoro = {
   sessionCount: number;
 }
 
-function printTime(s: Seconds): string {
-  const min = Math.floor(s / 60);
-  const sec = s % 60;
-
-  return [min, sec].map(v => String(v).padStart(2, "0")).join(":");
-}
-
-function resetInterval(p: Pomodoro) {
-  if (p.interval != -1) {
+function resetInterval() {
+  if (p.interval !== -1) {
     clearInterval(p.interval);
     p.interval = -1;
   }
 }
 
-function startTimer(p: Pomodoro) {
+function startTimer() {
   console.log("Timer Started");
   p.timer.state = TimerState.Ticking;
 
@@ -56,26 +49,30 @@ function startTimer(p: Pomodoro) {
 
   p.interval = window.setInterval(() => {
     if (p.timer.value === 0) {
-      finishTimer(p);
+      finishTimer();
     } else {
       p.timer.value -= 1;
     }
+
+    renderTimer();
   }, 1000);
 }
 
-function finishTimer(p: Pomodoro) {
+function finishTimer() {
   console.log("Timer Finished");
   p.timer.state = TimerState.Finished;
-  resetInterval(p);
+  resetInterval();
+
+  renderTimerControls();
 }
 
-function pauseTimer(p: Pomodoro) {
+function pauseTimer() {
   console.log("Timer Paused");
   p.timer.state = TimerState.Paused;
-  resetInterval(p);
+  resetInterval();
 }
 
-function nextTimer(p: Pomodoro) {
+function nextTimer() {
   console.log("Next Timer");
   p.timer.state = TimerState.Idle;
 
@@ -95,26 +92,103 @@ function nextTimer(p: Pomodoro) {
     p.cycle.time = 1;
     p.timer.value = 1;
   }
+
+  renderTimer();
 }
 
-function main() {
-  const p: Pomodoro = {
-    cycle: {
-      name: CycleName.Work,
-      time: 5
-    },
-    timer: {
-      value: 5,
-      state: TimerState.Idle
-    },
-    interval: -1,
-    sessionCount: 0
-  };
+function renderTimer() {
+  const s = p.timer.value;
+  const min = Math.floor(s / 60);
+  const sec = s % 60;
 
-  console.log(p);
+  timer.innerText = [min, sec].map(v => String(v).padStart(2, "0")).join(":");
 }
 
-main();
+function renderTimerControls() {
+  const text = ((): string => {
+    switch (p.timer.state) {
+      case TimerState.Idle:
+      case TimerState.Paused:
+        return "Start";
+
+      case TimerState.Ticking:
+        return "Pause";
+
+      case TimerState.Finished:
+        return "Next";
+    }
+  })();
+
+  timerControls.innerText = text;
+}
+
+const maybeTimer = document.querySelector<HTMLParagraphElement>("#timer");
+const maybeTimerControls = document.querySelector<HTMLButtonElement>("#timer-controls");
+if (!maybeTimer || !maybeTimerControls) throw new Error("Tried to query dom element, but too unlucky");
+
+const timer = maybeTimer;
+const timerControls = maybeTimerControls;
+
+const p: Pomodoro = {
+  cycle: {
+    name: CycleName.Work,
+    time: 5
+  },
+  timer: {
+    value: 5,
+    state: TimerState.Idle
+  },
+  interval: -1,
+  sessionCount: 0
+};
+
+timerControls.addEventListener("click", () => {
+  switch (p.timer.state) {
+    case TimerState.Idle:
+    case TimerState.Paused:
+      startTimer(); 
+      break;
+
+    case TimerState.Ticking:
+      pauseTimer();
+      break;
+
+    case TimerState.Finished:
+      nextTimer();
+      break;
+  }
+
+  renderTimerControls();
+});
+
+renderTimer();
+renderTimerControls();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
