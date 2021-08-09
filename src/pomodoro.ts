@@ -35,8 +35,13 @@ function usePomodoro(): usePomodoroHook {
 
   function tick(): boolean {
     const newTimer = timer - 1;
+
+    if (newTimer < 0) {
+      return true;
+    }
+
     setTimer(newTimer);
-    return newTimer <= 0;
+    return false;
   }
 
   function start() {
@@ -65,7 +70,7 @@ function usePomodoro(): usePomodoroHook {
       // TODO: Add max session count and cycles time to settings
       setNewCycle(Cycle.Work, 5);
     } else if (sessionCount >= 3) {
-      setNewCycle(Cycle.LongBreak, 5);
+      setNewCycle(Cycle.LongBreak, 3);
     } else {
       setNewCycle(Cycle.Break, 1);
     }

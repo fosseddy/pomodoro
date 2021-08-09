@@ -1,7 +1,7 @@
 import React from "react";
 import { usePomodoro, TimerState, Cycle } from "./pomodoro";
 import type { Seconds } from "./pomodoro";
-
+import styled from "styled-components";
 import workFinishSound from "./assets/work-finish.mp3";
 import breakFinishSound from "./assets/break-finish.mp3";
 
@@ -68,11 +68,25 @@ function App() {
   }
 
   return (
-    <div>
+    <Container>
       <h1>Pomodoro</h1>
       <h2>{printCycle(pomodoro.cycle)}</h2>
 
       <Timer time={pomodoro.timer} />
+
+      <CircleProgress
+        time={pomodoro.timer}
+        // TODO: add timers to settings
+        maxTime={(() => {
+          const t = {
+            [Cycle.Work]: 5,
+            [Cycle.Break]: 1,
+            [Cycle.LongBreak]: 3
+          }
+
+          return t[pomodoro.cycle];
+        })()}
+      />
 
       <TimerControls
         onStart={startTimer}
@@ -82,9 +96,52 @@ function App() {
       />
 
       <p>Session: {pomodoro.sessionCount}/3</p>
-    </div>
+    </Container>
   );
 }
+
+const Container = styled.main`
+  border: 1px solid black;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 3rem;
+`;
+
+function CircleProgress({ time, maxTime }: { time: Seconds, maxTime: Seconds }) {
+  const size = (s: string, r: string) => ({ cx: s, cy: s, r: r });
+  const [v, setV] = React.useState<string>("0");
+
+  React.useEffect(() => {
+    const t = 283 - (time/maxTime*283);
+    setV(t.toFixed(1));
+  }, [time, maxTime]);
+
+  return(
+    <svg viewBox="0 0 100 100" style={{width: "200px", height: "auto", border: "1px solid red"}}>
+      <g>
+        <Circle {...size("50", "45")} />
+        <ElapsedCircle {...size("50", "45")} strokeDasharray={v + " 283"} />
+      </g>
+    </svg>
+  );
+}
+
+const Circle = styled.circle`
+  fill: none;
+  stroke: gray;
+  stroke-width: 3px;
+`;
+
+const ElapsedCircle = styled(Circle)`
+  stroke: red; 
+  stroke-width: 6px;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: 1s linear all;
+`;
 
 type TimerProps = { time: Seconds }
 
@@ -142,4 +199,4 @@ function printCycle(cycle: Cycle) {
   return names[cycle];
 }
 
-export default App;
+export { App };
