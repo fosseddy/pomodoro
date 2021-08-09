@@ -2,9 +2,13 @@ import React from "react";
 import { usePomodoro, TimerState, Cycle } from "./pomodoro";
 import type { Seconds } from "./pomodoro";
 
+import workFinishSound from "./assets/work-finish.mp3";
+import breakFinishSound from "./assets/break-finish.mp3";
+
 function App() {
   const pomodoro = usePomodoro();
 
+  const sound = React.useRef<HTMLAudioElement>(new Audio());
   const interval = React.useRef<number>(-1);
   const intervalCallback = React.useRef<() => void>(intervalCb);
 
@@ -13,7 +17,12 @@ function App() {
   });
 
   React.useEffect(() => {
-    return () => resetInterval();
+    const s = sound.current;
+
+    return () => {
+      resetInterval();
+      s.pause();
+    }
   }, []);
 
   function intervalCb() {
@@ -39,6 +48,14 @@ function App() {
   function finishTimer() {
     pomodoro.finish();
     resetInterval();
+
+    if (pomodoro.cycle === Cycle.Work) {
+      sound.current.src = workFinishSound;
+    } else {
+      sound.current.src = breakFinishSound;
+    }
+
+    sound.current.play();
   }
 
   function pauseTimer() {
