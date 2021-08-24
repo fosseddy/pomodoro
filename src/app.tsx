@@ -1,9 +1,9 @@
 import React from "react";
 import { usePomodoro, TimerState, Cycle } from "./pomodoro";
 import type { Seconds } from "./pomodoro";
-import styled from "styled-components";
 import workFinishSound from "./assets/work-finish.mp3";
 import breakFinishSound from "./assets/break-finish.mp3";
+import "./app.css";
 
 function App() {
   const pomodoro = usePomodoro();
@@ -68,7 +68,7 @@ function App() {
   }
 
   return (
-    <Container>
+    <div>
       <h1>Pomodoro</h1>
       <h2>{printCycle(pomodoro.cycle)}</h2>
 
@@ -95,53 +95,41 @@ function App() {
         state={pomodoro.timerState}
       />
 
+      {/* TODO: settings */}
       <p>Session: {pomodoro.sessionCount}/3</p>
-    </Container>
+    </div>
   );
 }
 
-const Container = styled.main`
-  border: 1px solid black;
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 3rem;
-`;
-
 function CircleProgress({ time, maxTime }: { time: Seconds, maxTime: Seconds }) {
-  const size = (s: string, r: string) => ({ cx: s, cy: s, r: r });
+  const size = (s: string, r: string) => ({ cx: s, cy: s, r });
   const [v, setV] = React.useState<string>("0");
 
   React.useEffect(() => {
-    const t = 283 - (time/maxTime*283);
-    setV(t.toFixed(1));
+    const t = 283 - (time / maxTime * 283);
+    setV(t.toFixed(1) + " 283");
   }, [time, maxTime]);
 
   return(
-    <svg viewBox="0 0 100 100" style={{width: "200px", height: "auto", border: "1px solid red"}}>
+    <svg viewBox="0 0 100 100" style={{width: "400px", height: "auto", border: "1px solid red"}}>
       <g>
-        <Circle {...size("50", "45")} />
-        <ElapsedCircle {...size("50", "45")} strokeDasharray={v + " 283"} />
+        <circle {...size("50", "45")} />
+        <circle {...size("50", "45")} strokeDasharray={v} />
       </g>
     </svg>
   );
 }
 
-const Circle = styled.circle`
-  fill: none;
-  stroke: gray;
-  stroke-width: 3px;
-`;
+//  fill: none;
+//  stroke: gray;
+//  stroke-width: 3px;
 
-const ElapsedCircle = styled(Circle)`
-  stroke: red; 
-  stroke-width: 6px;
-  stroke-linecap: round;
-  transform: rotate(-90deg);
-  transform-origin: center;
-  transition: 1s linear all;
-`;
+//  stroke: red; 
+//  stroke-width: 6px;
+//  stroke-linecap: round;
+//  transform: rotate(-90deg);
+//  transform-origin: center;
+//  transition: stroke-dasharray 1s linear;
 
 type TimerProps = { time: Seconds }
 
