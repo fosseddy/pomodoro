@@ -72,6 +72,26 @@ export default Vue.extend({
     circleProgress(): string {
       const len = 283 - (this.timer.value / this.cycle.time * 283);
       return len.toFixed(0) + " 283";
+    },
+
+    circleProgressColor(): string {
+      const colors = {
+        [CycleName.Work]: "red",
+        [CycleName.Break]: "green",
+        [CycleName.LongBreak]: "blue"
+      };
+
+      return "timer__progress-circle--" + colors[this.cycle.name];
+    },
+
+    cycleName(): string {
+      const names = {
+        [CycleName.Work]: "Work",
+        [CycleName.Break]: "Break",
+        [CycleName.LongBreak]: "Long break"
+      };
+
+      return names[this.cycle.name];
     }
   },
 
@@ -146,96 +166,105 @@ export default Vue.extend({
 
 <template lang="pug">
   div#app
-    div
-      h1 Pomodoro
-      br
+    div(class="timer")
+      svg(class="timer__progress" viewBox="0 0 100 100")
+        g
+          circle(class="timer__progress-circle timer__progress-circle--bg")
+          circle(
+            class="timer__progress-circle timer__progress-circle--fg"
+            :class="circleProgressColor"
+            :stroke-dasharray="circleProgress"
+          )
+      div(class="timer__info")
+        p(class="timer__value") {{ formattedTimer }}
+        p(class="timer__cycle-name") {{ cycleName }}
 
+    button(
+      v-if="timer.state === TimerState.Idle || timer.state === TimerState.Paused"
+      @click="startTimer"
+    ) Start
 
-      div(class="timer")
-        svg(class="timer-progress" viewBox="0 0 100 100")
-          g
-            circle(class="timer-progress__circle timer-progress__circle--bg")
-            circle(
-              class="timer-progress__circle timer-progress__circle--fg"
-              :stroke-dasharray="circleProgress"
-            )
-        div(style="position: absolute; display: flex; flex-direction: column; align-items: center;")
-          p(class="timer-value") {{ formattedTimer }}
-          p(class="timer-state") {{ cycle.name }}
+    button(
+      v-else-if="timer.state === TimerState.Ticking"
+      @click="pauseTimer"
+    ) Pause
 
-      br
-      br
+    button(v-else @click="nextTimer") Next
 
-      button(
-        v-if="timer.state === TimerState.Idle || timer.state === TimerState.Paused"
-        @click="startTimer"
-      ) Start
-
-      button(
-        v-else-if="timer.state === TimerState.Ticking"
-        @click="pauseTimer"
-      ) Pause
-
-      button(v-else @click="nextTimer") Next
-      br
-      br
-
-      p Session: {{ sessionCount }} / 3
+    p Session: {{ sessionCount }} / 3
 </template>
 
 <style scoped lang="scss">
 $navy: #2f384b;
+$light-navy: #3d4457;
 $white: #f6f2eb;
 $red: #ff4e4d;
 $green: #05ec8c;
 $blue: #0bbddb;
 $gray: #858c99;
+$light-gray: #c0c9da;
 
 #app {
   background: $navy;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5rem;
 }
 
 .timer {
   position: relative;
-  width: 300px;
+  width: 100%;
+  height: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
 
-.timer-value {
-  color: $white;
-  font-size: 64px;
-}
+  &__progress {
+    transform: rotate(-90deg);
+  }
 
-.timer-state {
-  color: $white;
-  font-size: 32px;
-  text-transform: lowercase;
-}
+  &__progress-circle {
+    cx: 50px;
+    cy: 50px;
+    r: 45px;
+    fill: none;
 
-.timer-progress {
-  transform: rotate(-90deg);
-  border: 1px solid green;
-}
+    &--bg {
+      stroke-width: 1px;
+      stroke: $gray;
+    }
 
-.timer-progress__circle {
-  cx: 50px;
-  cy: 50px;
-  r: 45px;
-  fill: none;
-}
+    &--fg {
+      stroke-width: 4px;
+      stroke-linecap: round;
+      transition: stroke-dasharray 1s linear;
+    }
 
-.timer-progress__circle--bg {
-  stroke-width: 1px;
-  stroke: $gray;
-}
+    &--red { stroke: $red; }
+    &--blue { stroke: $blue; }
+    &--green { stroke: $green; }
+  }
 
-.timer-progress__circle--fg {
-  stroke-width: 4px;
-  stroke: $red;
-  stroke-linecap: round;
-  transition: stroke-dasharray 1s linear;
+  &__info {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1rem;
+  }
+
+  &__value {
+    color: $white;
+    font-size: 64px;
+    margin-bottom: 1rem;
+  }
+
+  &__cycle-name {
+    color: $white;
+    font-size: 20px;
+    text-transform: uppercase;
+  }
 }
 </style>
