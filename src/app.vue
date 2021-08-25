@@ -67,6 +67,11 @@ export default Vue.extend({
       const sec = this.timer.value % 60;
 
       return [min, sec].map(v => String(v).padStart(2, "0")).join(":");
+    },
+
+    circleProgress(): string {
+      const len = 283 - (this.timer.value / this.cycle.time * 283);
+      return len.toFixed(0) + " 283";
     }
   },
 
@@ -85,7 +90,6 @@ export default Vue.extend({
     },
 
     startTimer() {
-      console.log("Timer Started");
       if (this.cycle.name === CycleName.Work &&
           this.timer.state === TimerState.Idle) {
         this.sessionCount += 1;
@@ -141,31 +145,97 @@ export default Vue.extend({
 </script>
 
 <template lang="pug">
-  div
-    h1 Pomodoro
-    br
+  div#app
+    div
+      h1 Pomodoro
+      br
 
-    h1 Timer: {{ formattedTimer }}
-    br
 
-    p Cycle Name: {{ cycle.name }}
-    br
+      div(class="timer")
+        svg(class="timer-progress" viewBox="0 0 100 100")
+          g
+            circle(class="timer-progress__circle timer-progress__circle--bg")
+            circle(
+              class="timer-progress__circle timer-progress__circle--fg"
+              :stroke-dasharray="circleProgress"
+            )
+        div(style="position: absolute; display: flex; flex-direction: column; align-items: center;")
+          p(class="timer-value") {{ formattedTimer }}
+          p(class="timer-state") {{ cycle.name }}
 
-    p Session: {{ sessionCount }} / 3
-    br
+      br
+      br
 
-    button(
-      v-if="timer.state === TimerState.Idle || timer.state === TimerState.Paused"
-      @click="startTimer"
-    ) Start
+      button(
+        v-if="timer.state === TimerState.Idle || timer.state === TimerState.Paused"
+        @click="startTimer"
+      ) Start
 
-    button(
-      v-else-if="timer.state === TimerState.Ticking"
-      @click="pauseTimer"
-    ) Pause
+      button(
+        v-else-if="timer.state === TimerState.Ticking"
+        @click="pauseTimer"
+      ) Pause
 
-    button(v-else @click="nextTimer") Next
+      button(v-else @click="nextTimer") Next
+      br
+      br
+
+      p Session: {{ sessionCount }} / 3
 </template>
 
 <style scoped lang="scss">
+$navy: #2f384b;
+$white: #f6f2eb;
+$red: #ff4e4d;
+$green: #05ec8c;
+$blue: #0bbddb;
+$gray: #858c99;
+
+#app {
+  background: $navy;
+}
+
+.timer {
+  position: relative;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-value {
+  color: $white;
+  font-size: 64px;
+}
+
+.timer-state {
+  color: $white;
+  font-size: 32px;
+  text-transform: lowercase;
+}
+
+.timer-progress {
+  transform: rotate(-90deg);
+  border: 1px solid green;
+}
+
+.timer-progress__circle {
+  cx: 50px;
+  cy: 50px;
+  r: 45px;
+  fill: none;
+}
+
+.timer-progress__circle--bg {
+  stroke-width: 1px;
+  stroke: $gray;
+}
+
+.timer-progress__circle--fg {
+  stroke-width: 4px;
+  stroke: $red;
+  stroke-linecap: round;
+  transition: stroke-dasharray 1s linear;
+}
 </style>
