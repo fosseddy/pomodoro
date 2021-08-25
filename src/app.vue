@@ -220,6 +220,7 @@ $light-gray: #c0c9da;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: $white;
 
   &__progress {
     transform: rotate(-90deg);
@@ -252,17 +253,15 @@ $light-gray: #c0c9da;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 1rem;
+    padding-top: 1rem; // balance out &__value margin-bottom: 1rem
   }
 
   &__value {
-    color: $white;
     font-size: 64px;
     margin-bottom: 1rem;
   }
 
   &__cycle-name {
-    color: $white;
     font-size: 20px;
     text-transform: uppercase;
   }
