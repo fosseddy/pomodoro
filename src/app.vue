@@ -81,7 +81,7 @@ export default Vue.extend({
         [CycleName.LongBreak]: "blue"
       };
 
-      return "timer__progress-circle--" + colors[this.cycle.name];
+      return colors[this.cycle.name];
     },
 
     cycleName(): string {
@@ -172,12 +172,33 @@ export default Vue.extend({
           circle(class="timer__progress-circle timer__progress-circle--bg")
           circle(
             class="timer__progress-circle timer__progress-circle--fg"
-            :class="circleProgressColor"
+            :class="`timer__progress-circle--${circleProgressColor}`"
             :stroke-dasharray="circleProgress"
           )
       div(class="timer__info")
         p(class="timer__value") {{ formattedTimer }}
         p(class="timer__cycle-name") {{ cycleName }}
+
+    div
+      svg(viewBox="0 0 32 32" width=16 v-for="circle in 3" :key="circle")
+        circle(
+          v-if="circle <= sessionCount"
+          cx=16
+          cy=16
+          r=14
+          fill="#858c99"
+          stroke-width=3
+          stroke="#858c99"
+        )
+        circle(
+          v-else
+          cx=16
+          cy=16
+          r=14
+          fill="#2f384b"
+          stroke-width=3
+          stroke="#858c99"
+        )
 
     button(
       v-if="timer.state === TimerState.Idle || timer.state === TimerState.Paused"
