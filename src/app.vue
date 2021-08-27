@@ -159,6 +159,13 @@ export default Vue.extend({
         this.cycle = { name: CycleName.Break, time: 1 };
         this.timer.value = 1;
       }
+    },
+
+    reset() {
+      this.resetInterval();
+      this.timer = { value: 4, state: TimerState.Idle };
+      this.cycle = { name: CycleName.Work, time: 4 };
+      this.sessionCount = 0;
     }
   }
 });
@@ -181,6 +188,7 @@ export default Vue.extend({
         p(class="timer__cycle-name") {{ cycleName }}
 
     button(
+      class="btn btn--content-center"
       v-if="timer.state === TimerState.Idle || timer.state === TimerState.Paused"
       @click="startTimer"
     )
@@ -190,6 +198,7 @@ export default Vue.extend({
           polygon(class="icon--filled-white icon--white" points="10,8 16,12 10,16 10,8")
 
     button(
+      class="btn btn--content-center"
       v-else-if="timer.state === TimerState.Ticking"
       @click="pauseTimer"
     )
@@ -199,15 +208,16 @@ export default Vue.extend({
           rect(class="icon--white" x="10" y="8" width="1" height="8")
           rect(class="icon--white" x="13" y="8" width="1" height="8")
 
-    button(v-else @click="nextTimer")
+    button(class="btn btn--content-center" v-else @click="nextTimer")
       svg(class="icon" viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
           polyline(class="icon--white" stroke-width="2" points="9,8 12,12 9,16")
           polyline(class="icon--white" stroke-width="2" points="13,8 16,12 13,16")
 
-    div(style="width: 40%")
-      p Session: {{ sessionCount }} / 3
+    div(class="session-counter")
+      p(class="session-counter__value") {{ sessionCount }} / 3
+      button(class="session-counter__btn btn" @click="reset") Reset
 </template>
 
 <style scoped lang="scss">
@@ -220,26 +230,30 @@ $blue: #0bbddb;
 $gray: #858c99;
 $light-gray: #c0c9da;
 
-button {
-  cursor: pointer;
-  border: none;
-  background: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    opacity: 0.5;
-  }
-}
-
 #app {
   background: $navy;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 5rem;
+  padding-bottom: 2rem;
+}
+
+.btn {
+  cursor: pointer;
+  border: none;
+  background: none;
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  &--content-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .icon {
@@ -273,6 +287,7 @@ button {
   align-items: center;
   justify-content: center;
   color: $white;
+  margin-bottom: 3rem;
 
   &__progress {
     transform: rotate(-90deg);
@@ -316,6 +331,22 @@ button {
   &__cycle-name {
     font-size: 20px;
     text-transform: uppercase;
+  }
+}
+
+.session-counter {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+
+  &__value {
+    text-align: center;
+    color: $white;
+    margin-bottom: .5rem;
+  }
+
+  &__btn {
+    color: $gray;
   }
 }
 </style>
