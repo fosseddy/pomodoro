@@ -28,11 +28,20 @@ type Cycle = {
   time: Seconds;
 }
 
+type Settings = {
+  work: Cycle;
+  break: Cycle;
+  longBreak: Cycle;
+  maxSessionCount: number;
+}
+
 type Data = {
   timer: Timer;
   cycle: Cycle;
   setIntervalId: number;
   sessionCount: number;
+
+  settings: Settings;
 
   sound: {
     work: HTMLAudioElement;
@@ -47,10 +56,17 @@ export default Vue.extend({
 
   data(): Data {
     return {
-      timer: { value: 4, state: TimerState.Idle },
-      cycle: { name: CycleName.Work, time: 4 },
-      setIntervalId: -1,
+      timer: { value: -1, state: TimerState.Idle },
+      cycle: { name: CycleName.Work, time: -1 },
       sessionCount: 0,
+      setIntervalId: -1,
+
+      settings: {
+        work: { name: CycleName.Work, time: 25 * 60 },
+        break: { name: CycleName.Break, time: 5 * 60 },
+        longBreak: { name: CycleName.LongBreak, time: 20 * 60 },
+        maxSessionCount: 4
+      },
 
       sound: {
         work: new Audio(finishWorkSound),
@@ -93,6 +109,15 @@ export default Vue.extend({
 
       return names[this.cycle.name];
     }
+  },
+
+  created() {
+    this.setNewCycle(this.settings.work);
+
+    console.assert(
+      this.timer.value !== -1 && this.cycle.time !== -1,
+      "Could not initialize setting values"
+    );
   },
 
   destroyed() {
@@ -150,15 +175,17 @@ export default Vue.extend({
         if (this.cycle.name === CycleName.LongBreak) {
           this.sessionCount = 0;
         }
-        this.cycle = { name: CycleName.Work, time: 4 };
-        this.timer.value = 4;
-      } else if (this.sessionCount >= 3) {
-        this.cycle = { name: CycleName.LongBreak, time: 2 };
-        this.timer.value = 2;
+        this.setNewCycle(this.settings.work);
+      } else if (this.sessionCount >= this.settings.maxSessionCount) {
+        this.setNewCycle(this.settings.longBreak);
       } else {
-        this.cycle = { name: CycleName.Break, time: 1 };
-        this.timer.value = 1;
+        this.setNewCycle(this.settings.break);
       }
+    },
+
+    setNewCycle(c: Cycle) {
+      this.cycle = c;
+      this.timer.value = c.time;
     },
 
     reset() {
@@ -216,7 +243,7 @@ export default Vue.extend({
           polyline(class="icon--white" stroke-width="2" points="13,8 16,12 13,16")
 
     div(class="session-counter")
-      p(class="session-counter__value") {{ sessionCount }} / 3
+      p(class="session-counter__value") {{ sessionCount }} / {{ settings.maxSessionCount }}
       button(class="session-counter__btn btn" @click="reset") Reset
 </template>
 
