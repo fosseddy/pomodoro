@@ -175,42 +175,36 @@ export default Vue.extend({
             :class="`timer__progress-circle--${circleProgressColor}`"
             :stroke-dasharray="circleProgress"
           )
+
       div(class="timer__info")
         p(class="timer__value") {{ formattedTimer }}
         p(class="timer__cycle-name") {{ cycleName }}
 
-    div
-      svg(viewBox="0 0 32 32" width=16 v-for="circle in 3" :key="circle")
-        circle(
-          v-if="circle <= sessionCount"
-          cx=16
-          cy=16
-          r=14
-          fill="#858c99"
-          stroke-width=3
-          stroke="#858c99"
-        )
-        circle(
-          v-else
-          cx=16
-          cy=16
-          r=14
-          fill="#2f384b"
-          stroke-width=3
-          stroke="#858c99"
-        )
-
     button(
       v-if="timer.state === TimerState.Idle || timer.state === TimerState.Paused"
       @click="startTimer"
-    ) Start
+    )
+      svg(class="icon" viewBox="0 0 24 24")
+        g
+          circle(cx="12" cy="12" r="11")
+          polygon(class="icon--filled-gray" points="10,8 16,12 10,16 10,8")
 
     button(
       v-else-if="timer.state === TimerState.Ticking"
       @click="pauseTimer"
-    ) Pause
+    )
+      svg(class="icon" viewBox="0 0 24 24")
+        g
+          circle(cx="12" cy="12" r="11")
+          rect(x="10" y="8" width="1" height="8")
+          rect(x="13" y="8" width="1" height="8")
 
-    button(v-else @click="nextTimer") Next
+    button(v-else @click="nextTimer")
+      svg(class="icon" viewBox="0 0 24 24")
+        g
+          circle(cx="12" cy="12" r="11")
+          polyline(stroke-width="2" points="9,8 12,12 9,16")
+          polyline(stroke-width="2" points="13,8 16,12 13,16")
 
     p Session: {{ sessionCount }} / 3
 </template>
@@ -225,12 +219,36 @@ $blue: #0bbddb;
 $gray: #858c99;
 $light-gray: #c0c9da;
 
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
 #app {
   background: $navy;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 5rem;
+}
+
+.icon {
+  width: 64px;
+  heigth: 64px;
+  fill: none;
+  stroke: $gray;
+  stroke-width: 1px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &--filled-gray {
+    fill: $gray;
+  }
 }
 
 .timer {
