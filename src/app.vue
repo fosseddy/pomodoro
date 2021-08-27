@@ -206,7 +206,8 @@ export default Vue.extend({
           polyline(class="icon--white" stroke-width="2" points="9,8 12,12 9,16")
           polyline(class="icon--white" stroke-width="2" points="13,8 16,12 13,16")
 
-    p Session: {{ sessionCount }} / 3
+    div(style="width: 40%")
+      p Session: {{ sessionCount }} / 3
 </template>
 
 <style scoped lang="scss">
@@ -223,6 +224,10 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     opacity: 0.5;
