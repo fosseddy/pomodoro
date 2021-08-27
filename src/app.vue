@@ -187,7 +187,7 @@ export default Vue.extend({
       svg(class="icon" viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
-          polygon(class="icon--filled-gray" points="10,8 16,12 10,16 10,8")
+          polygon(class="icon--filled-white icon--white" points="10,8 16,12 10,16 10,8")
 
     button(
       v-else-if="timer.state === TimerState.Ticking"
@@ -196,15 +196,15 @@ export default Vue.extend({
       svg(class="icon" viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
-          rect(x="10" y="8" width="1" height="8")
-          rect(x="13" y="8" width="1" height="8")
+          rect(class="icon--white" x="10" y="8" width="1" height="8")
+          rect(class="icon--white" x="13" y="8" width="1" height="8")
 
     button(v-else @click="nextTimer")
       svg(class="icon" viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
-          polyline(stroke-width="2" points="9,8 12,12 9,16")
-          polyline(stroke-width="2" points="13,8 16,12 13,16")
+          polyline(class="icon--white" stroke-width="2" points="9,8 12,12 9,16")
+          polyline(class="icon--white" stroke-width="2" points="13,8 16,12 13,16")
 
     p Session: {{ sessionCount }} / 3
 </template>
@@ -248,6 +248,14 @@ button {
 
   &--filled-gray {
     fill: $gray;
+  }
+
+  &--filled-white {
+    fill: $white;
+  }
+
+  &--white {
+    stroke: $white;
   }
 }
 
