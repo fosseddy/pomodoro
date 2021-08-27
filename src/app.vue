@@ -86,8 +86,10 @@ export default Vue.extend({
     },
 
     circleProgress(): string {
-      const len = 283 - (this.timer.value / this.cycle.time * 283);
-      return len.toFixed(0) + " 283";
+      const circleLen = 283;
+      const progress =
+        circleLen - (this.timer.value / this.cycle.time * circleLen);
+      return `${progress.toFixed(0)} ${circleLen}`;
     },
 
     circleProgressColor(): string {
@@ -135,8 +137,10 @@ export default Vue.extend({
     },
 
     startTimer() {
-      if (this.cycle.name === CycleName.Work &&
-          this.timer.state === TimerState.Idle) {
+      if (
+        this.cycle.name === CycleName.Work &&
+        this.timer.state === TimerState.Idle
+      ) {
         this.sessionCount += 1;
       }
 
@@ -170,8 +174,10 @@ export default Vue.extend({
     nextTimer() {
       this.timer.state = TimerState.Idle;
 
-      if (this.cycle.name === CycleName.Break ||
-          this.cycle.name === CycleName.LongBreak) {
+      if (
+        this.cycle.name === CycleName.Break ||
+        this.cycle.name === CycleName.LongBreak
+      ) {
         if (this.cycle.name === CycleName.LongBreak) {
           this.sessionCount = 0;
         }
@@ -190,8 +196,8 @@ export default Vue.extend({
 
     reset() {
       this.resetInterval();
-      this.timer = { value: 4, state: TimerState.Idle };
-      this.cycle = { name: CycleName.Work, time: 4 };
+      this.setNewCycle(this.settings.work);
+      this.timer.state = TimerState.Idle;
       this.sessionCount = 0;
     }
   }
@@ -222,7 +228,10 @@ export default Vue.extend({
       svg(class="icon" viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
-          polygon(class="icon--filled-white icon--white" points="10,8 16,12 10,16 10,8")
+          polygon(
+            class="icon--filled-white icon--white"
+            points="10,8 16,12 10,16 10,8"
+          )
 
     button(
       class="btn btn--content-center"
@@ -239,23 +248,30 @@ export default Vue.extend({
       svg(class="icon" viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
-          polyline(class="icon--white" stroke-width="2" points="9,8 12,12 9,16")
-          polyline(class="icon--white" stroke-width="2" points="13,8 16,12 13,16")
+          polyline(
+            class="icon--white"
+            stroke-width="2"
+            points="9,8 12,12 9,16"
+          )
+          polyline(
+            class="icon--white"
+            stroke-width="2"
+            points="13,8 16,12 13,16"
+          )
 
     div(class="session-counter")
-      p(class="session-counter__value") {{ sessionCount }} / {{ settings.maxSessionCount }}
+      p(class="session-counter__value")
+        | {{ sessionCount }} / {{ settings.maxSessionCount }}
       button(class="session-counter__btn btn" @click="reset") Reset
 </template>
 
 <style scoped lang="scss">
 $navy: #2f384b;
-$light-navy: #3d4457;
 $white: #f6f2eb;
 $red: #ff4e4d;
 $green: #05ec8c;
 $blue: #0bbddb;
 $gray: #858c99;
-$light-gray: #c0c9da;
 
 #app {
   background: $navy;
@@ -271,9 +287,7 @@ $light-gray: #c0c9da;
   border: none;
   background: none;
 
-  &:hover {
-    opacity: 0.5;
-  }
+  &:hover { opacity: 0.5; }
 
   &--content-center {
     display: flex;
@@ -292,23 +306,16 @@ $light-gray: #c0c9da;
   stroke-linecap: round;
   stroke-linejoin: round;
 
-  &--filled-gray {
-    fill: $gray;
-  }
-
-  &--filled-white {
-    fill: $white;
-  }
-
-  &--white {
-    stroke: $white;
-  }
+  &--filled-gray { fill: $gray; }
+  &--filled-white { fill: $white; }
+  &--white { stroke: $white; }
 }
 
 .timer {
   position: relative;
   width: 100%;
-  height: 50%;
+  height: 60%;
+  max-height: 450px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -316,9 +323,7 @@ $light-gray: #c0c9da;
   color: $white;
   margin-bottom: 3rem;
 
-  &__progress {
-    transform: rotate(-90deg);
-  }
+  &__progress { transform: rotate(-90deg); }
 
   &__progress-circle {
     cx: 50px;
@@ -347,7 +352,7 @@ $light-gray: #c0c9da;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 1rem; // balance out &__value margin-bottom: 1rem
+    padding-top: 1rem;
   }
 
   &__value {
@@ -372,8 +377,6 @@ $light-gray: #c0c9da;
     margin-bottom: .5rem;
   }
 
-  &__btn {
-    color: $gray;
-  }
+  &__btn { color: $gray; }
 }
 </style>
