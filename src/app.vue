@@ -174,10 +174,7 @@ export default Vue.extend({
     nextTimer() {
       this.timer.state = TimerState.Idle;
 
-      if (
-        this.cycle.name === CycleName.Break ||
-        this.cycle.name === CycleName.LongBreak
-      ) {
+      if (this.cycle.name !== CycleName.Work) {
         if (this.cycle.name === CycleName.LongBreak) {
           this.sessionCount = 0;
         }
