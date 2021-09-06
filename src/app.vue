@@ -203,63 +203,55 @@ export default Vue.extend({
 
 <template lang="pug">
   div#app
-    div(class="timer")
-      svg(class="timer__progress" viewBox="0 0 100 100")
+    div.timer
+      svg.timer__progress(viewBox="0 0 100 100")
         g
-          circle(class="timer__progress-circle timer__progress-circle--bg")
-          circle(
-            class="timer__progress-circle timer__progress-circle--fg"
+          circle.timer__progress-circle.timer__progress-circle--bg
+          circle.timer__progress-circle.timer__progress-circle--fg(
             :class="`timer__progress-circle--${circleProgressColor}`"
             :stroke-dasharray="circleProgress"
           )
 
-      div(class="timer__info")
-        p(class="timer__value") {{ formattedTimer }}
-        p(class="timer__cycle-name") {{ cycleName }}
+      div.timer__info
+        p.timer__value {{ formattedTimer }}
+        p.timer__cycle-name {{ cycleName }}
 
-    button(
-      class="btn btn--content-center"
+    button.btn.btn--content-center(
       v-if="timer.state === TimerState.Idle || timer.state === TimerState.Paused"
       @click="startTimer"
     )
-      svg(class="icon" viewBox="0 0 24 24")
+      svg.icon(viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
-          polygon(
-            class="icon--filled-white icon--white"
-            points="10,8 16,12 10,16 10,8"
-          )
+          polygon.icon--filled-white.icon--white(points="10,8 16,12 10,16 10,8")
 
-    button(
-      class="btn btn--content-center"
+    button.btn.btn--content-center(
       v-else-if="timer.state === TimerState.Ticking"
       @click="pauseTimer"
     )
-      svg(class="icon" viewBox="0 0 24 24")
+      svg.icon(viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
-          rect(class="icon--white" x="10" y="8" width="1" height="8")
-          rect(class="icon--white" x="13" y="8" width="1" height="8")
+          rect.icon--white(x="10" y="8" width="1" height="8")
+          rect.icon--white(x="13" y="8" width="1" height="8")
 
-    button(class="btn btn--content-center" v-else @click="nextTimer")
-      svg(class="icon" viewBox="0 0 24 24")
+    button.btn.btn--content-center(v-else @click="nextTimer")
+      svg.icon(viewBox="0 0 24 24")
         g
           circle(cx="12" cy="12" r="11")
-          polyline(
-            class="icon--white"
+          polyline.icon--white(
             stroke-width="2"
             points="9,8 12,12 9,16"
           )
-          polyline(
-            class="icon--white"
+          polyline.icon--white(
             stroke-width="2"
             points="13,8 16,12 13,16"
           )
 
-    div(class="session-counter")
-      p(class="session-counter__value")
+    div.session-counter
+      p.session-counter__value
         | {{ sessionCount }} / {{ settings.maxSessionCount }}
-      button(class="session-counter__btn btn" @click="reset") Reset
+      button.session-counter__btn.btn(@click="reset") Reset
 </template>
 
 <style scoped lang="scss">
@@ -296,7 +288,6 @@ $gray: #858c99;
 
 .icon {
   width: 64px;
-  heigth: 64px;
   fill: none;
   stroke: $gray;
   stroke-width: 1px;
